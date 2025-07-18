@@ -1,11 +1,16 @@
 package com.lld.bookmyshow.models;
 
+import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import org.springframework.data.annotation.Id;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 @MappedSuperclass
 public class BaseModel {
     @Id
-    private String id;
+    private long id;
     private String createdAt;
     private String updatedAt;
 }

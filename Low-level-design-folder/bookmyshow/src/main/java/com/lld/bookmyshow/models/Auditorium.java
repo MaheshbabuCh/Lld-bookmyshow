@@ -1,6 +1,6 @@
 package com.lld.bookmyshow.models;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,10 +8,17 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Auditorium {
+public class Auditorium extends BaseModel{
 
     private String name;
+
+    @OneToMany
     private List<Seat> seats;
-    private Show show;
+
+//    @OneToOne
+//    private Show show;
+
+    @Enumerated(EnumType.STRING)
+    @ElementCollection
     private List<Feature> features;
 }
