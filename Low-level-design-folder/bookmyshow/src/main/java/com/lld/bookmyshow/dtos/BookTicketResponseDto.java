@@ -24,4 +24,59 @@ public class BookTicketResponseDto {
 
     private Date showStartTime;
 
+    public List<String> getSeatNumbers() {
+        return seatNumbers;
+    }
+
+    public void setSeatNumbers(List<String> seatNumbers) {
+        this.seatNumbers = seatNumbers;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public String getAuditoriumName() {
+        return auditoriumName;
+    }
+
+    public void setAuditoriumName(String auditoriumName) {
+        this.auditoriumName = auditoriumName;
+    }
+
+    public String getMovieName() {
+        return movieName;
+    }
+
+    public void setMovieName(String movieName) {
+        this.movieName = movieName;
+    }
+
+    public Long getTicketId() {
+        return ticketId;
+    }
+
+    public void setTicketId(Long ticketId) {
+        this.ticketId = ticketId;
+    }
+
+    public String getTicketStatus() {
+        return ticketStatus;
+    }
+
+    public void setTicketStatus(String ticketStatus) {
+        this.ticketStatus = ticketStatus;
+    }
+
+    public Date getShowStartTime() {
+        return showStartTime;
+    }
+
+    public void setShowStartTime(Date showStartTime) {
+        this.showStartTime = showStartTime;
+    }
 }

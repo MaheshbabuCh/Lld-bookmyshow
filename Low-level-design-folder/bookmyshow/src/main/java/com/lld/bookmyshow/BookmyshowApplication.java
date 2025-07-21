@@ -23,7 +23,7 @@ public class BookmyshowApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         UserRequestDto userRequestDto = new UserRequestDto();
 
-        userRequestDto.setEmail("maheshbabucherukuri1997@gmail.com");
+        userRequestDto.setEmail("maheshbabucherukuri@example.com");
         userRequestDto.setPassword("password");
         userRequestDto.setName("Mahesh Babu Cherukuri");
         userController.createUser(userRequestDto);
