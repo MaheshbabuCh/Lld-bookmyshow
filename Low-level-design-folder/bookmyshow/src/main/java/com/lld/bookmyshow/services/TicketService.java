@@ -2,15 +2,15 @@ package com.lld.bookmyshow.services;
 
 import com.lld.bookmyshow.exceptions.SeatNotAvailableException;
 import com.lld.bookmyshow.exceptions.ShowNotFoundException;
-import com.lld.bookmyshow.models.Seat;
-import com.lld.bookmyshow.models.Show;
-import com.lld.bookmyshow.models.Show_Seat;
-import com.lld.bookmyshow.models.Ticket;
-import com.lld.bookmyshow.repositories.SeatRepository;
-import com.lld.bookmyshow.repositories.ShowRepository;
-import com.lld.bookmyshow.repositories.Show_Seat_Repository;
+import com.lld.bookmyshow.models.*;
+import com.lld.bookmyshow.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,14 +19,24 @@ public class TicketService {
     ShowRepository showRepository;
     SeatRepository seatRepository;
     Show_Seat_Repository showSeatRepository;
+    SeatLockService seatLockService;
+    UserRepository userRepository;
+    TicketRepository ticketRepository;
 
     // This service will handle the business logic for ticket booking, cancellation, etc.
     // It will interact with the repository layer to perform CRUD operations on Ticket entities.
     @Autowired
-    public TicketService(ShowRepository showRepository, SeatRepository seatRepository, Show_Seat_Repository showSeatRepository) {
+    public TicketService(ShowRepository showRepository, SeatRepository seatRepository,
+                         Show_Seat_Repository showSeatRepository,
+                         SeatLockService seatLockService,
+                         UserRepository userRepository,
+                         TicketRepository ticketRepository) {
         this.showRepository = showRepository;
         this.seatRepository = seatRepository;
         this.showSeatRepository = showSeatRepository;
+        this.seatLockService = seatLockService;
+        this.userRepository = userRepository;
+        this.ticketRepository = ticketRepository;
     }
 
 
@@ -60,19 +70,25 @@ public class TicketService {
             throw new IllegalArgumentException("No seats found with the provided IDs.");
         }
 
-       List<Show_Seat> showSeats =  showSeatRepository.findAllBySeatInAndShow(seats, showOptional.get());
-        if(showSeats.isEmpty()){
-            // No show-seats found for the provided show and seats, handle accordingly
-            throw new SeatNotAvailableException("Seats are not available for the selected show.");
+        List<Show_Seat> showSeatsList =seatLockService.getAndLockSeats(seats, showOptional.get());
+
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if(userOptional.isEmpty()){
+            // User not found, handle accordingly (e.g., throw an exception)
+            throw new IllegalArgumentException("User with ID " + userId + " not found.");
         }
 
-        return null;
-    }
+        Ticket ticket = new Ticket();
+        ticket.setShow(showOptional.get());
+        ticket.setUser(userOptional.get());
+        ticket.setAmount(100);
+        ticket.setTicketStatus(TicketStatus.CONFIRMED);
+        ticket.setSeats(seats);
+        ticket.setPaymentMode(PaymentMode.CREDIT_CARD);
+        ticket.setStartTime(new Date());
 
-    // Example method to cancel a ticket
-    public void cancelTicket() {
-        // Logic to cancel a ticket
+        return ticketRepository.save(ticket);
     }
-
-    // Other methods related to ticket management can be added here
 }
+
